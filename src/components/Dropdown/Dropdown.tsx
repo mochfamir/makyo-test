@@ -91,11 +91,11 @@ export const Dropdown: React.FC<DropdownProps> = ({
           return option ? (
             <div
               key={v}
-              className="flex items-center bg-blue-500 text-white px-2 py-1 rounded-md"
+              className="flex items-center bg-gray-200 text-gray-800 px-3 py-1 rounded-full"
             >
               {option.label}
               <button
-                className="ml-2 text-white hover:text-gray-200"
+                className="ml-2 text-gray-600 hover:text-gray-400"
                 onClick={(e) => {
                   e.stopPropagation();
                   removeSelectedValue(v);
@@ -116,22 +116,37 @@ export const Dropdown: React.FC<DropdownProps> = ({
       style={{ zIndex }}
     >
       {searchable && (
-        <input
-          ref={searchInputRef}
-          type="text"
-          className="w-full p-2 border border-gray-300 rounded mb-2"
-          placeholder="Search..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          onClick={(e) => e.stopPropagation()}
-        />
+        <div className="relative mb-2">
+          <input
+            ref={searchInputRef}
+            type="text"
+            className="w-full p-2 border border-gray-300 rounded pl-8"
+            placeholder="Search..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onClick={(e) => e.stopPropagation()}
+          />
+          <span className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400">
+            🔍
+          </span>
+          {searchQuery && (
+            <button
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              onClick={() => setSearchQuery("")}
+            >
+              ×
+            </button>
+          )}
+        </div>
       )}
       <div className="max-h-60 overflow-y-auto">
         {filteredOptions.length > 0 ? (
           filteredOptions.map((option) => (
             <div
               key={option.value}
-              className="px-4 py-2 cursor-pointer hover:bg-gray-100"
+              className={`px-4 py-2 cursor-pointer hover:bg-gray-100 ${
+                selectedValues.includes(option.value) ? "bg-blue-100" : ""
+              }`}
               onClick={() => handleOptionClick(option.value)}
             >
               {renderOption ? renderOption(option) : option.label}
@@ -156,12 +171,15 @@ export const Dropdown: React.FC<DropdownProps> = ({
   return (
     <div ref={containerRef} className={`relative ${className}`}>
       <div
-        className="w-full p-2 border border-gray-300 rounded cursor-pointer flex flex-wrap gap-2 items-center"
+        className="w-full p-2 border border-gray-300 rounded cursor-pointer flex justify-between items-center"
         onClick={() => setIsOpen(!isOpen)}
       >
-        {multiple
-          ? selectedChips || placeholder
-          : options.find((opt) => opt.value === value)?.label || placeholder}
+        <div className="flex flex-wrap gap-2 items-center">
+          {multiple
+            ? selectedChips || placeholder
+            : options.find((opt) => opt.value === value)?.label || placeholder}
+        </div>
+        <span className="text-gray-400">▼</span>
       </div>
       {isOpen &&
         (usePortal
